@@ -3,6 +3,7 @@ package org.vaadin.joni;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.html.Nav;
 import com.vaadin.flow.component.html.Paragraph;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
@@ -18,10 +19,12 @@ import org.vaadin.joni.shortcututil.ShortcutUtil;
 public class MainView extends VerticalLayout implements RouterLayout {
     public MainView() {
         Nav nav = new Nav();
-
+        nav.setSizeFull();
         nav.add(new RouterLink("Route One", RouteOne.class));
+        nav.add(new Span(" | "));
         nav.add(new RouterLink("Route Two", RouteTwo.class));
-
+        nav.add(new Span(" | "));
+        nav.add(new RouterLink("Route Three", RouteThree.class));
 
         add(nav, new Paragraph("Welcome to the awesome shortcut page!"));
 
