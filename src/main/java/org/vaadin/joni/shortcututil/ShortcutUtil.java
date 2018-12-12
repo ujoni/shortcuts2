@@ -41,11 +41,15 @@ public final class ShortcutUtil {
             addHandler(key, component, listener);
         }
         else {
-            component.addAttachListener(
-                    attachEvent -> addHandler(key, component, listener));
-            component.addDetachListener(
-                    detachEvent -> removeShortcut(component, key));
+            component.addAttachListener(attachEvent -> {
+                addHandler(key, component, listener);
+                attachEvent.unregisterListener();
+            });
         }
+        component.addDetachListener(detachEvent -> {
+            removeShortcut(component, key);
+            detachEvent.unregisterListener();
+        });
     }
 
     /***
