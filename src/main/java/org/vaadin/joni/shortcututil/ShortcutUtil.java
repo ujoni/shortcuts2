@@ -49,7 +49,7 @@ public final class ShortcutUtil {
             HandlerHolder holder = new HandlerHolder(component, handler);
             // we can use holder for removal since its identity is supplied by component
             deque.remove(holder);
-            deque.addLast(holder);
+            deque.addFirst(holder);
         }
     }
 
@@ -73,7 +73,7 @@ public final class ShortcutUtil {
         synchronized (lock) {
             ArrayDeque<HandlerHolder> deque = scHandlers.get(id);
             if (deque != null && !deque.isEmpty()) {
-                deque.getLast().exec();
+                deque.getFirst().exec();
             }
         }
     }
