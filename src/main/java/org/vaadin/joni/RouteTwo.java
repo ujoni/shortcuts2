@@ -26,6 +26,6 @@ public class RouteTwo extends VerticalLayout {
     }
 
     private void handleKeyDown() {
-        Notification.show("Handled RIGHT");
+        Notification.show("RouteTwo handled RIGHT");
     }
 }

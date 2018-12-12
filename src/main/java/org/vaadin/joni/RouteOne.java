@@ -19,7 +19,7 @@ public class RouteOne extends VerticalLayout {
     }
 
     private void handleKeyDown() {
-        Notification.show("Handled LEFT");
+        Notification.show("RouteOne handled LEFT");
     }
 
     @Override
