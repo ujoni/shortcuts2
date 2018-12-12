@@ -12,7 +12,8 @@ import static org.vaadin.marcus.shortcut.Shortcut.*;
 
 public final class ShortcutUtil {
 
-    private static HashMap<String, ArrayDeque<HandlerHolder>> scHandlers = new HashMap<>();
+    private static HashMap<String, ArrayDeque<HandlerHolder>> scHolders = new HashMap<>();
+    private static HashMap<String, DomListenerRegistration> registrations = new HashMap<>();
     private static final Object lock = new Object();
 
     static public void addShortcut(final Component component, final Key key, final Listener listener) {
@@ -34,18 +35,24 @@ public final class ShortcutUtil {
 
         System.out.println("addHandler: " + id + ", " + component);
 
-        DomListenerRegistration registration = add(UI.getCurrent().getElement(), keys, () -> ShortcutUtil.handleShortCut(keys));
+
         synchronized (lock) {
-            if (!scHandlers.containsKey(id)) {
+            if (!scHolders.containsKey(id)) {
                 deque = new ArrayDeque<>();
-                scHandlers.put(id, deque);
+                scHolders.put(id, deque);
             } else {
-                deque = scHandlers.get(id);
+                deque = scHolders.get(id);
             }
             System.out.print(" -> ");
             locked_remove(id, component);
 
-            deque.addFirst(new HandlerHolder(component, listener, registration));
+            // add the shortcut handler to the front-end only once
+            if (!registrations.containsKey(id)) {
+                DomListenerRegistration registration = add(UI.getCurrent().getElement(), keys, () -> ShortcutUtil.handleShortCut(id));
+                registrations.put(id, registration);
+            }
+
+            deque.addFirst(new HandlerHolder(component, listener));
         }
     }
 
@@ -62,24 +69,15 @@ public final class ShortcutUtil {
         if (!Thread.holdsLock(lock)) {
             throw new RuntimeException("The thread " + Thread.currentThread().getName() + " does not own the lock. This method cannot be called without the lock");
         }
-        Deque<HandlerHolder> deque = scHandlers.get(id);
+        Deque<HandlerHolder> deque = scHolders.get(id);
         if (deque != null && !deque.isEmpty()) {
             HandlerHolder identity = new HandlerHolder(component);
-            Iterator<HandlerHolder> iterator = deque.iterator();
-            HandlerHolder holder;
-            while (iterator.hasNext()) {
-                holder = iterator.next();
-
-                if (holder.equals(identity)) {
-                    System.out.println("locked_remove: found " + holder);
-                    holder.clear();
-                    iterator.remove();
-                    break;
-                }
-            }
+            deque.remove(identity);
 
             if (deque.isEmpty()) {
-                scHandlers.remove(id);
+                // There are no shortcuts left so we remove both the shortcut holder + the dom registration
+                scHolders.remove(id);
+                registrations.remove(id).remove();
             }
         }
         else {
@@ -87,10 +85,9 @@ public final class ShortcutUtil {
         }
     }
 
-    private static void handleShortCut(Key keys) {
-        String id = makeId(keys);
+    private static void handleShortCut(String id) {
         synchronized (lock) {
-            ArrayDeque<HandlerHolder> deque = scHandlers.get(id);
+            ArrayDeque<HandlerHolder> deque = scHolders.get(id);
             if (deque != null && !deque.isEmpty()) {
                 deque.getFirst().exec();
             }
@@ -109,16 +106,14 @@ public final class ShortcutUtil {
     private static class HandlerHolder {
         private Component component;
         private Listener listener;
-        private DomListenerRegistration registration;
 
         HandlerHolder(Component component) {
             this.component = component;
         }
 
-        HandlerHolder(Component component, Listener listener, DomListenerRegistration registration) {
+        HandlerHolder(Component component, Listener listener) {
             this.component = component;
             this.listener = listener;
-            this.registration = registration;
         }
 
         boolean ownedBy(Component component) {
@@ -128,11 +123,6 @@ public final class ShortcutUtil {
         void exec() {
             if (listener != null)
                 listener.handleAction();
-        }
-
-        void clear() {
-            if (this.registration != null)
-                this.registration.remove();
         }
 
         @Override
