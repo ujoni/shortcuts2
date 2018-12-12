@@ -19,3 +19,6 @@ that registered its shortcut last has priority (a stack).
 - Does not support only-when-focused shortcuts. The component that has priority will receive the callback
   whether it has focus or not.  
   Suggestion: enable event-bubbling for `Focusable` components
+- Prevent default functionality is a complete mystery. How should it work? Shortcut should probably enable 
+  `preventDefault`. However, in cases where the event bubbles up, default behaviour might be needed (i.e. for 
+  `Focusable` components when they are not focused.)
