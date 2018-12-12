@@ -1,8 +1,6 @@
 package org.vaadin.joni;
 
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -20,12 +18,5 @@ public class RouteOne extends VerticalLayout {
 
     private void handleKeyDown() {
         Notification.show("RouteOne handled LEFT");
-    }
-
-    @Override
-    protected void onAttach(AttachEvent attachEvent) {
-        super.onAttach(attachEvent);
-        add(new Paragraph(UI.getCurrent().toString()));
-        add(new Paragraph(UI.getCurrent().getPage().toString()));
     }
 }

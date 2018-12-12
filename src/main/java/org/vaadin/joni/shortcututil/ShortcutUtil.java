@@ -33,9 +33,6 @@ public final class ShortcutUtil {
         String id = makeId(keys);
         ArrayDeque<HandlerHolder> deque;
 
-        System.out.println("addHandler: " + id + ", " + component);
-
-
         synchronized (lock) {
             if (!scHolders.containsKey(id)) {
                 deque = new ArrayDeque<>();
@@ -43,7 +40,6 @@ public final class ShortcutUtil {
             } else {
                 deque = scHolders.get(id);
             }
-            System.out.print(" -> ");
             locked_remove(id, component);
 
             // add the shortcut handler to the front-end only once
@@ -65,7 +61,6 @@ public final class ShortcutUtil {
     }
 
     static private void locked_remove(String id, Component component) {
-        System.out.println("locked_remove: " + id + ", " + component);
         if (!Thread.holdsLock(lock)) {
             throw new RuntimeException("The thread " + Thread.currentThread().getName() + " does not own the lock. This method cannot be called without the lock");
         }
@@ -79,9 +74,6 @@ public final class ShortcutUtil {
                 scHolders.remove(id);
                 registrations.remove(id).remove();
             }
-        }
-        else {
-            System.out.println("locked_remove: deque was " + (deque == null ? "null" : "empty"));
         }
     }
 
@@ -116,10 +108,6 @@ public final class ShortcutUtil {
             this.listener = listener;
         }
 
-        boolean ownedBy(Component component) {
-            return this.component.equals(component);
-        }
-
         void exec() {
             if (listener != null)
                 listener.handleAction();
@@ -139,5 +127,4 @@ public final class ShortcutUtil {
             return false;
         }
     }
-
 }
