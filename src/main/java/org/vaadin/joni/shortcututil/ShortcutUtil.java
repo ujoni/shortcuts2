@@ -83,6 +83,7 @@ public final class ShortcutUtil {
         for (Key k : keys) {
             keyStrings.addAll(k.getKeys());
         }
+        keyStrings.sort(String::compareToIgnoreCase);
         return String.join("", keyStrings);
     }
 
