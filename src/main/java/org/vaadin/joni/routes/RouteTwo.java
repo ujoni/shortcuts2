@@ -1,4 +1,4 @@
-package org.vaadin.joni;
+package org.vaadin.joni.routes;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.button.Button;
@@ -6,6 +6,7 @@ import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.Route;
+import org.vaadin.joni.MainView;
 import org.vaadin.joni.shortcututil.ShortcutUtil;
 
 @Route(value = "routetwo", layout = MainView.class)

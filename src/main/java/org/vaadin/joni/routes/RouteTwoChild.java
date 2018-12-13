@@ -1,4 +1,4 @@
-package org.vaadin.joni;
+package org.vaadin.joni.routes;
 
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.html.Div;
