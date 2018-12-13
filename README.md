@@ -24,7 +24,10 @@ that registered its shortcut last has priority (a stack).
   `Focusable` components when they are not focused.)
   
   
-  ### Known issues:
-  - Refreshing the page twice will disable all current shortcuts. I am sure there
-  is some resource reconstruction going on which I am not aware of. Probably an
-  easy fix.
+### Known issues:
+- Refreshing the page twice will disable all current shortcuts. I am sure there
+is some resource reconstruction going on which I am not aware of. Probably an
+easy fix.
+- Server-side does not have reliable understanding about whether a component has 
+focus or not. This makes it fairly impossible to have code like  
+`if (component isntanceof Focusable && hasFocus(component)) consumeEvent(e);`

@@ -1,8 +1,6 @@
 package org.vaadin.joni.shortcututil;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.Key;
-import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.dom.DomListenerRegistration;
 
 import java.util.*;
@@ -130,6 +128,8 @@ public final class ShortcutUtil {
      * Invokes the shortcut identified by {@code id}.
      * Selects the latest addition for this particular id for execution.
      * TODO: event-bubbling and only-if-focused
+     *
+     * NOTE: only-if-focused is quite impossible to implement reliably on server-side
      *
      * @param id    Shortcut identifier generated with {@link #makeId(Key...)}
      */
