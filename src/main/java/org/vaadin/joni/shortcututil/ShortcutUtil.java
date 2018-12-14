@@ -134,12 +134,18 @@ public final class ShortcutUtil {
      * @param id    Shortcut identifier generated with {@link #makeId(Key...)}
      */
     private static void handleShortCut(String id) {
+        Optional<HandlerHolder> mark = Optional.empty();
         synchronized (lock) {
             ArrayDeque<HandlerHolder> deque = scHolders.get(id);
             if (deque != null && !deque.isEmpty()) {
-                deque.getFirst().exec();
+                for (HandlerHolder holder : deque) {
+                    if (holder.skipsEvent()) continue;
+                    mark = Optional.of(holder);
+                    break;
+                }
             }
         }
+        mark.ifPresent(HandlerHolder::exec);
     }
 
     /**
@@ -161,6 +167,8 @@ public final class ShortcutUtil {
     private static class HandlerHolder {
         private Component component;
         private Listener listener;
+        private boolean isFocusable = false;
+        private boolean hasFocus = false;
 
         HandlerHolder(Component component) {
             this.component = component;
@@ -169,11 +177,24 @@ public final class ShortcutUtil {
         HandlerHolder(Component component, Listener listener) {
             this.component = component;
             this.listener = listener;
+
+            if (this.component instanceof Focusable) {
+                Focusable comp = (Focusable) this.component;
+                isFocusable = true;
+                comp.addFocusListener(event -> {
+                    System.out.println("received focus event from " + event.getSource());
+                    hasFocus = !hasFocus;
+                });
+            }
         }
 
         void exec() {
             if (listener != null)
                 listener.handleAction();
+        }
+
+        boolean skipsEvent() {
+            return isFocusable && !hasFocus;
         }
 
         @Override
